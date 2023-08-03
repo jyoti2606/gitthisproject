@@ -1,0 +1,31 @@
+{
+
+    "welcomeFile": "/index.html",
+  
+    "authenticationMethod": "route",
+  
+    "routes": [
+  
+      {
+  
+        "source": "^/escalation-management/",
+  
+        "destination": "srv_api"
+  
+      },
+  
+      {
+  
+        "source": "(.*)",
+  
+        "target": "/thisproapp/$1",
+  
+        "service": "html5-apps-repo-rt",
+  
+        "authenticationType": "xsuaa"
+  
+      }
+  
+    ]
+  
+  }

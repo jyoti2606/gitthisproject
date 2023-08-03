@@ -1,0 +1,46 @@
+{
+    "xsappname": "thisproject",
+    "tenant-mode": "dedicated",
+
+    "oauth2-configuration": {
+
+    "redirect-uris": [
+
+      "https://17c42b48trial-17c42b48trial-dev-thisproject-aprouter.cfapps.us10-001.hana.ondemand.com/login/callback"
+
+           ]
+
+        },
+
+    "scopes": [
+    {
+      "name": "$XSAPPNAME.manager_scope",
+      "description": "manager_scope"
+    },
+    {
+      "name": "$XSAPPNAME.purshaser_scope",
+      "description": "purshaser_scope"
+    }
+  ],
+  "attributes": [],
+  "role-templates": [
+    {
+      "name": "manager_scope",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.manager_scope"
+      ],
+      "attribute-references": []
+    },
+    {
+      "name": "purshaser_scope",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.purshaser_scope"
+      ],
+      "attribute-references": []
+    }
+  ]
+}
+
+
