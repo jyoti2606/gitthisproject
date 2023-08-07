@@ -20,9 +20,9 @@ module.exports = cds.service.impl(async function () {
         let result = po.tx(req).send(
             {
                 query: req.query,
-                // headers: {
-                //     apiKey: process.env.apiKey
-                // }
+                headers: {
+                    apiKey: process.env.apiKey
+                }
             }
         );
         return result;

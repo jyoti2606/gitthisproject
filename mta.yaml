@@ -3,112 +3,114 @@ ID: thisProject
 description: A simple CAP project.
 version: 1.0.0
 modules:
-- name: thisProject-aprouter
-  type: nodejs
-  path: app
-  requires:
-  - name: thisProject-repo-runtime
-  - name: thisProject-xsuaa
-  - name: srv-api
-    group: destinations
-    properties:
-      forwardAuthToken: true
-      name: srv_api
-      url: ~{srv-url}
-- name: thisProject-srv
-  type: nodejs
-  path: gen/srv
-  requires:
-  - name: thisProject-db
-  - name: thisProject-xsuaa
-  - name: thispro-destination
-  provides:
-  - name: srv-api
-    properties:
-      srv-url: ${default-url}
-  parameters:
-    buildpack: nodejs_buildpack
-  build-parameters:
-    builder: npm-ci
-- name: thisProject-db-deployer
-  type: hdb
-  path: gen/db
-  requires:
-  - name: thisProject-db
-  parameters:
-    buildpack: nodejs_buildpack
-- name: thisProject-app-content
-  type: com.sap.application.content
-  path: .
-  requires:
-  - name: thisProject-repo-host
-    parameters:
-      content-target: true
-  build-parameters:
-    build-result: resources
+  - name: thisProject-aprouter
+    type: nodejs
+    path: app
     requires:
-    - artifacts:
-      - thisproapp.zip
-      name: thisproapp
-      target-path: resources/
-- name: thisproapp
-  type: html5
-  path: app/thisproapp
-  build-parameters:
-    build-result: dist
-    builder: custom
-    commands:
-    - npm install
-    - npm run build:cf
-    supported-platforms: []
+      - name: thisProject-repo-runtime
+      - name: thisProject-xsuaa
+      - name: srv-api
+        group: destinations
+        properties:
+          forwardAuthToken: true
+          name: srv_api
+          url: ~{srv-url}
+  - name: thisProject-srv
+    type: nodejs
+    path: gen/srv
+    requires:
+      - name: thisProject-db
+      - name: thisProject-xsuaa
+      - name: thispro-destination
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+    parameters:
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
+  - name: thisProject-db-deployer
+    type: hdb
+    path: gen/db
+    requires:
+      - name: thisProject-db
+    parameters:
+      buildpack: nodejs_buildpack
+  - name: thisProject-app-content
+    type: com.sap.application.content
+    path: .
+    requires:
+      - name: thisProject-repo-host
+        parameters:
+          content-target: true
+    build-parameters:
+      build-result: resources
+      requires:
+        - artifacts:
+            - thisproapp.zip
+          name: thisproapp
+          target-path: resources/
+  - name: thisproapp
+    type: html5
+    path: app/thisproapp
+    build-parameters:
+      build-result: dist
+      builder: custom
+      commands:
+        - npm install
+        - npm run build:cf
+      supported-platforms:
+        []
 resources:
-- name: thisProject-db
-  type: com.sap.xs.hdi-container
-  parameters:
-    service: hana
-    service-plan: hdi-shared
+  - name: thisProject-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
 
-- name: thisProject-xsuaa
-  type: org.cloudfoundry.managed-service
-  parameters:
-    path: ./xs-security.json
-    service: xsuaa
-    service-plan: application
-- name: thispro-destination
-  type: org.cloudfoundry.managed-service
-  parameters:
-    config:
-      HTML5Runtime_enabled: false
-      init_data:
-        instance:
-          destinations:
-          - Authentication: NoAuthentication
-            Name: ui5
-            ProxyType: Internet
-            Type: HTTP
-            URL: https://ui5.sap.com
-          existing_destinations_policy: update
-      version: 1.0.0
-    service: destination
-    # service-name: thisProject-destination-service
-    service-plan: lite 
-- name: thisProject-repo-host
-  type: org.cloudfoundry.managed-service
-  parameters:
-    service: html5-apps-repo
-    service-name: thisProject-html5-srv
-    service-plan: app-host
-- name: thisProject-repo-runtime
-  type: org.cloudfoundry.managed-service
-  parameters:
-    service: html5-apps-repo
-    service-name: thisProject-html5-rt
-    service-plan: app-runtime 
+  - name: thisProject-xsuaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      path: ./xs-security.json
+      service: xsuaa
+      service-plan: application
+  - name: thispro-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        HTML5Runtime_enabled: false
+        init_data:
+          instance:
+            destinations:
+              - Authentication: NoAuthentication
+                Name: ui5
+                ProxyType: Internet
+                Type: HTTP
+                URL: https://ui5.sap.com
+            existing_destinations_policy: update
+        version: 1.0.0
+      service: destination
+      # service-name: thisProject-destination-service
+      service-plan: lite
+  - name: thisProject-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-name: thisProject-html5-srv
+      service-plan: app-host
+
+  - name: thisProject-repo-runtime
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-name: thisProject-html5-rt
+      service-plan: app-runtime
 parameters:
   deploy_mode: html5-repo
   enable-parallel-deployments: true
 build-parameters:
   before-all:
-  - builder: custom
-    commands:
-    - npx -p @sap/cds-dk cds build --production
+    - builder: custom
+      commands:
+        - npx -p @sap/cds-dk cds build --production
